@@ -58,12 +58,12 @@ If the safety numbers are not checked, a MitM attack could have been done withou
 - Provide an extra (multi-factor) verification before joining a certain conversation/group.
 - Make sure well encrypted (and not personal) systems are used for communication.
 
-
 ### Sources
 - <https://www.youtube.com/watch?v=PD9_djWnkgQ>
 - <https://www.youtube.com/watch?v=DXv1boalsDI>
 - <https://www.youtube.com/watch?v=9sO2qdTci-s> --> Quite advanced and not in scope of this question (I think)...
-- Claude-AI for further insights.  
+- Claude-AI for further insights. 
+- Maybe Something from the course notes could be added, but I am not sure what.  
   
 _Status: Complete_  
 _Done by: Hann1bal20_
