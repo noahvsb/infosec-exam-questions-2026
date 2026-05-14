@@ -65,5 +65,5 @@ If the safety numbers are not checked, a MitM attack could have been done withou
 - <https://www.youtube.com/watch?v=9sO2qdTci-s> --> Quite advanced and not in scope of this question (I think)...
 - Claude-AI for further insights.  
   
-_Status: Complete?_  
+_Status: Complete_  
 _Done by: Hann1bal20_
