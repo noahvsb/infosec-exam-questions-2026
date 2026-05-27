@@ -16,6 +16,10 @@ Design the architecture for a regional/national healthcare data exchange system.
 5. **Non-repudiation**: Data access should be logged. This logs should also be available to the patients (to see who has accessed their data). This is used in current platforms like COZO. 
 
 ### Security mechanisms to implement
+**Availability**:
+- Redundant servers
+- Regular backups (encrypted, offsite)
+- DDoS protection (request limits, ...)
 **Confidentiality**  
 - All data encrypted at rest: AES-256-GCM.
 - Keys in Hardware Security Module
@@ -33,11 +37,12 @@ Design the architecture for a regional/national healthcare data exchange system.
     * Proves who signed the data.
     * Proves that the data is not altered.
     * Uses small keys -> faster, more efficient
+Ed25519 is based on elliptic curve cryptography (Curve25519), offering equivalent security to RSA-3072 with much smaller keys → faster signing and verification, less storage overhead.
 - Any modification to a record creates a new signed version but the original is never overwritten
 
 **Authentication and Access Control**
 - To start using the application, a user have to authenticate itself using eID. 
-- Health care providers can access the platform with eID together with their RIZIV number (registry of licensed professionals). Nightly sync with RIZIV should be implemented to immediately block accounts of revoked licenses.
+- Health care providers can access the platform with eID together with their RIZIV number (registry of licensed professionals). Standard nightly sync, but for more critical revocations, an hourly sync can be used.
 - When the user wants to use the application (after registration), he has to login with biometric authentication or a pincode. 
 - Session stops after short time period (re-login). 
 - To implement extra security, a user needs to reverify with MFA/eID after a certain amount of time. 
@@ -45,7 +50,7 @@ Design the architecture for a regional/national healthcare data exchange system.
 - Role-based (only allowed to look at certain data) with referalls if needed.
 
 **Non-repudiation**
-- Tamper-evident audit logs: cryptographically chained, append only.
+- Tamper-evident audit logs: cryptographically chained, append only. The patient should be able to access these logs to see which entities have accessed their data.
 
 ### Legal aspects
 - If certain medical data wants to be used in certain (scientific) research, the owner first have to give an informed consent to do so. 
@@ -81,5 +86,5 @@ Design the architecture for a regional/national healthcare data exchange system.
 - IS_UG_3_7_Appl_System (notes)
 - Claude-AI for further insights. 
 
-_Status: almost complete_  
+_Status: complete_  
 _Done by: Hann1bal20_
