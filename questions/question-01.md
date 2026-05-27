@@ -76,6 +76,8 @@ However, the calculation of a value $(X_{m-j} \cdot H^{j+1})$ is a bit compute i
 * $Y$: This is just the concatenation of these previous blocks 
 
 
+In GCM, we The GCTR function is used first to compute the ciphertext. This uses an encoding of the IV, which we can already pre-compute. Then GHASH is used to compute a HASH of the entire block: ciphertext along with Associate data etc. This hash is then encoded using the GCTR to determine the authentication tag.
+
 ### The comparison
 
 **Offline pre-computation**
@@ -86,9 +88,10 @@ However, the calculation of a value $(X_{m-j} \cdot H^{j+1})$ is a bit compute i
     * Note: We cannot pre-compute the AES encryptions for the blocks or the tag because the input to AES depends on the plaintext ($M_i$).
 * GCM: 
     * 1 AES call to generate the hash key $H$.
-    * $m-1$ heavy $GF(2^{128})$ multiplications to pre-compute the powers of $H$ ($H^2, H^3, \dots, H^m$).
+    * $m-1$ $GF(2^{128})$ multiplications to pre-compute the powers of $H$ ($H^2, H^3, \dots, H^m$).
     * $m$ AES calls to completely pre-compute the keystream $E(K, CB_i)$.
     * 1 AES call to pre-compute the tag offset $E(K, CB_0)$.
+    * 1 AES call to pre-compute the tag offset $E(K, CB_0)$. for the second GCTR section
     * Note: GCM allows us to push 100% of the AES workload to the offline phase.
 
 If we assume all calculations that could be pre-computed have already been performed.  And that we can exploit the parallellizability to it's maximal potential (having an infinite amount of parallel processors)
@@ -102,17 +105,17 @@ Then, the online computational complexity of the two algorithms reduces to the f
     * **total latency**: 1 AES call + 1 XOR tree
         
 * GCM:
-    * $GF(2^{128})$ multiplication for each block: done in parallel
-    * xor's done in parallel for each block
-    * 1 concatenating xor at the end (can be parallelized) --> xor tree, lg(m)
-    * **total latency**: 1 XOR + 1 GF(2^128) multiplication + 1 XOR tree
-
+    * XOR to produce ciphertext $C_i = P_i \oplus E(K, CB_i)$. in the first GCTR
+    * $GF(2^{128})$ multiplication for each block ($C_i \cdot H^{m-i}$): done in parallel (assuming $H^i$ are pre-computed).
+    * 1 concatenating XOR at the end (can be parallelized) --> XOR tree, $\lg(m)$.
+    * 1 final XOR to encrypt the tag: $T = S \oplus E(K, CB_0)$.
+    * **Total latency**: XOR (generate $C$) + $GF(2^{128})$ multiplication + XOR tree (GHASH sum) + XOR (for Tag).
 
 we see they both have a XOR tree concatenating all the blocks. So the remaining factors that could determine an online performance difference are:
 * OCB: 1 AES encryption
 
 versus
-* GCM: one multiplication between two $GF(2^{128})$ polynomials + a xor operation between two 128 bit numbers
+* GCM: one multiplication between two $GF(2^{128})$ polynomials + 2 xor operations between two 128 bit numbers
 
 Which of those will turn out fastest depends on the hardware optimisations used. The GF(2^128) multiplications can be optimised/accelerated in hardware, as can the AES encryption.
 
