@@ -14,4 +14,16 @@ When browsing the (secure) home page of the university in May 2022, these were t
 
 ## Answer
 
-TODO
+- RSA 4096 key pair: RSA 4096 might be a bit overkill for the university website. RSA 1024 is not even broken yet. The larger key adds some computational work, so i would argue that for this case RSA 2048 would be secure enough. The public exponent is also industry standard. Nothing about this choice is vulnerable, so could be kept. 
+
+- X509 certificate: All of this makes sense. The university can not use its certificate to certify other certificates (job of CA). A one year validity period is safe. If it's too long, key might be compromised or security algorithms might be compromised. Signed using SHA2 256 is also a secure choice. 
+
+- PRs should not use the relatively small exponent 2^16+1 (this is only recommended for public keys)
+
+- PUs certification: All of this could be kept. 12 year validity period might be long, but in this case, it uses secure algorithms that are near-future proof (RSA 4096, SHA2 384). Nothing out of the ordinary here. 
+
+- PUu certification: The certificate is self-signed, which means we're talking about a root CA here. The certificate has a validity period of 28 years, which is LONG. The reason for this is that a root certificate is baked in browser's settings/files. To update this certificate would require some work, and for old browsers, this could be a problem (if they dont update it anymore).  I dont see anything stating the RSA key length used for this certificate, but i would assume its RSA 4096 or something equally secure. 
+
+- signed using PKCS 1.5: In future versions, this would ideally be changed to something more secure, like RSA PSS. 
+
+In general, there is not really anything that i would change here. The only thing i would consider is changing the validity period of the root certificate to a shorter period of time, and changing the signing of the certificates to RSA-PSS.
